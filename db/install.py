@@ -56,6 +56,7 @@ def synthetic_data(n):
 	genders = ["MALE","FEMALE"]
 	types = ["2","3"]
 	buildings = ["49J","80J"]
+	occupied = [False,True]
 	division = {"2":['A','B'],'3':['A','B','C']}
 	prices = {"2":5500,"3":4500}
 
@@ -74,8 +75,9 @@ def synthetic_data(n):
 		units.append(unit)
 		room_divs = division[type_]
 		for r in room_divs:
+			idx = int(np.round(np.random.uniform(0,1)))
 			room_id = unit_id+r	
-			room = (room_id,unit_id,False,prices[type_])	
+			room = (room_id,unit_id,occupied[idx],prices[type_])	
 			rooms.append(room)
 		count = count+1
 

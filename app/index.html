@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+   <head>
+			<title>Campus Africa</title>
+			<!-- meta -->
+			<meta charset="utf-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+			<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.9/angular.min.js"></script>
+			<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.9/angular-route.js"></script>
+
+
+
+      <!-- Pagination stuff -->
+      <script src="lib/pagination/pagination.js"></script>
+      <link rel="stylesheet" href="css/pagination_style.css">
+
+      <!-- Loading Spinner stuff -->
+      <link rel="stylesheet" href="css/loading_spinner_style.css">
+			<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.9/angular-animate.js"></script>
+
+			<!-- bootstrap -->
+			<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+			<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+			<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+			<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+
+			
+			<!-- main stuff -->
+			<script src = "js/app.js"></script>
+			<script src = "js/booking_controller.js"></script>
+			<script src="services/data_service.js"></script>
+					
+		</head>
+
+   <body>
+      <div ng-app = "mainApp" >
+				<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+					<a class="navbar-brand" href="#">
+						<img src="imgs/brand/calogo.png" width="30" height="30" alt="">
+						Campus Africa
+					</a>
+
+					<!-- buttons [booking and tracking booking] -->
+					<ul class="navbar-nav">
+						<li class="nav-item">
+							<a class="nav-link" href="#/">Home<span class="sr-only">(current)</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#/buildings">Buildings <span class="sr-only">(current)</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#/bookings">Stay with us <span class="sr-only">(current)</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#/Contact us\">Contact us<span class="sr-only">(current)</span></a>
+						</li>
+					</ul>
+				</nav>
+				<!-- to render other views -->
+				<div ng-view>
+				</div>
+			</div>
+		</body>
+</html>

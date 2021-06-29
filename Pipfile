@@ -12,6 +12,7 @@ dotenv = "*"
 psycopg2 = "*"
 numpy = "*"
 flask-dotenv = "*"
+flask-cors = "*"
 
 [requires]
 python_version = "3.5"

@@ -58,7 +58,7 @@ class Database:
 
 	# get rooms filtering using the params
 	def get_rooms(self,gender,type_,building,occupied):
-		query = """ SELECT units.unit_id,room_id,type,price FROM bookings.units INNER JOIN bookings.rooms ON bookings.units.unit_id = bookings.rooms.unit_id AND 
+		query = """ SELECT units.unit_id,room_id,type,price,building FROM bookings.units INNER JOIN bookings.rooms ON bookings.units.unit_id = bookings.rooms.unit_id AND 
 		bookings.units.gender=(%s) AND bookings.units.type = (%s) AND bookings.units.building = (%s) AND bookings.rooms.occupied=(%s)"""
 		query_params = (gender,type_,building,occupied)
 		conn = self.conn
@@ -69,8 +69,8 @@ class Database:
 			query_results = []
 			row = cur.fetchone()
 			while row is not None:
-				unit_id,room_id,type_,price = row
-				room = {'unit_id':unit_id,'room_id':room_id,'type':type_,'price':price}
+				unit_id,room_id,type_,price,building = row
+				room = {'unit_id':unit_id,'room_id':room_id,'type':type_,'price':price,'building':building}
 				query_results.append(room)
 				row = cur.fetchone()
 			cur.close()
