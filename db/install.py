@@ -1,5 +1,6 @@
 import psycopg2
 import numpy as np
+import censusname
 # from dotenv import load_dotenv
 # import os
 
@@ -25,7 +26,7 @@ class Database:
                                   host=POSTGRES_HOST,port=POSTGRES_PORT,database=POSTGRES_DATABASE)
 
 	# get units filtering using parameters
-	def seed_db(self,units,rooms):
+	def seed_db(self,units,rooms,tenants):
 		conn = self.conn
 		try:
 			cur = conn.cursor()
@@ -39,6 +40,11 @@ class Database:
 				rooms_query_params = rooms[i]
 				cur.execute(rooms_query,rooms_query_params)
 			
+			tenants_query = """INSERT INTO bookings.tenants(tenant_id,name,surname,gender,email,contact,room_id) values(%s,%s,%s,%s,%s,%s,%s)"""
+			for i in range(len(tenants)):
+				tenants_query_params =tenants[i]
+				cur.execute(tenants_query,tenants_query_params)
+
 			conn.commit()
 			conn.close()
 
@@ -62,29 +68,42 @@ def synthetic_data(n):
 
 	units = []
 	rooms = []
+	tenants = []
 	count = 0
-
+	identity = 9706095341086
 	for i in range(n):
 		index = int(np.round(np.random.uniform(0,1)))
 		unit_id = buildings[index]+str(1101+count)
 		gender = genders[index]
 		type_ = types[index]
 		building = buildings[index]
-	
 		unit = (unit_id,gender,type_,building)
 		units.append(unit)
 		room_divs = division[type_]
 		for r in room_divs:
 			idx = int(np.round(np.random.uniform(0,1)))
 			room_id = unit_id+r	
-			room = (room_id,unit_id,occupied[idx],prices[type_])	
+			occ = occupied[idx]
+			room = (room_id,unit_id,occ,prices[type_])	
 			rooms.append(room)
+
+			# there is a tenant
+			if occ == True:
+				tenant_id = str(identity)
+				info = censusname.generate().split(' ')
+				name,surname = info[0],info[1]
+				email = name+surname+str(count)+'@gmail.com'
+				contact = '07173399'+str(np.random.randint(10,40))
+				tenant = (tenant_id,name,surname,gender,email,contact,room_id)
+				tenants.append(tenant)
+				identity = identity+1
 		count = count+1
 
-	return units,rooms
+	return units,rooms,tenants
 
 
 if __name__=='__main__':
 	db = Database()
-	units,rooms = synthetic_data(600)
-	db.seed_db(units,rooms)
+	units,rooms,tenants, = synthetic_data(500)
+	db.seed_db(units,rooms,tenants)
+	# print(tenants)

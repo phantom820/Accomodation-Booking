@@ -13,6 +13,7 @@ psycopg2 = "*"
 numpy = "*"
 flask-dotenv = "*"
 flask-cors = "*"
+censusname = "*"
 
 [requires]
 python_version = "3.5"

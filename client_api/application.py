@@ -18,7 +18,7 @@ def get_room(room_id):
     room = db.get_room(room_id)
     return jsonify(room)
 
-@app.route('/api/rooms/',methods = ['GET'])
+@app.route('/api/rooms/',methods=['GET'])
 def get_rooms():
     gender = request.args.get('gender')
     type_ = request.args.get('type')
@@ -27,7 +27,7 @@ def get_rooms():
     rooms = db.get_rooms(gender,type_,building,occupied)
     return jsonify(rooms)
 
-@app.route('/api/room',methods=['PUT'])
+@app.route('/api/rooms',methods=['PUT'])
 def put_room():
     arg_keys = ['room_id','occupied']
     args = request.get_json()        
@@ -38,6 +38,18 @@ def put_room():
     occupied = args['occupied']
     result = db.update_room(room_id,occupied)
     return jsonify(result)
+
+@app.route('/api/tenants/<tenant_id>',methods=['GET'])
+def get_tenant(tenant_id):
+    tenant = db.get_tenant(tenant_id)
+    return jsonify(tenant)
+
+@app.route('/api/tenants',methods=['PUT'])
+def put_tenant():
+    args = request.get_json()
+    result = db.add_tenant(args)
+    return jsonify(result),201
+
 
 if __name__ == '__main__':
     app.run(debug=True)

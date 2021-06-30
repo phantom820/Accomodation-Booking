@@ -18,7 +18,10 @@ mainApp.controller( "BookingsController", function( $scope , $http, $location,Da
 			
 
 			//regular expression to check for SA id number pattern
-			$scope.regex = '(([0-9][0-9][0-1][0-9][0-3][0-9])([0-9][0-9][0-9][0-9])([0-1])([0-9])([0-9]))'
+			$scope.idRegex = '(([0-9][0-9][0-1][0-9][0-3][0-9])([0-9][0-9][0-9][0-9])([0-1])([0-9])([0-9]))'
+
+			/** TODO  fix this regex**/
+			$scope.contactRegex = '(((0)[0-9][0-9][0-9][0-9][0-9])([0-9][0-9][0-9][0-9])([0-9])([0-9])([0-9]))'
 
 			//building variables array
 			$scope.buildings = ["49 JORISSEN","80 JORISSEN"]
@@ -34,13 +37,13 @@ mainApp.controller( "BookingsController", function( $scope , $http, $location,Da
 			$scope.genderMap = {"Male":"MALE","Female":"FEMALE"};
 
 			// funding options
-			$scope.fundingOptions = ["NSFAS","Private bursar","Self funding"]
+			$scope.fundingOptions = ["NSFAS","PRIVATE BURSAR","SELF FUNDING"]
 
 			//study institution options
 			$scope.institutions = ["University of the Witwatersrand","Rosebank College"]
-
+			$scope.institutionsMap = {"University of the Witwatersrand":"WITS","Rosebank College":"ROSEBANK"}
 			//study years
-			$scope.studyYears = ["1","2","3","4","Postgraduate"]
+			$scope.studyYears = ["1","2","3","4","POSTGRADUATE"]
 
 			//identity number model
 			$scope.identityNumber="";
@@ -143,6 +146,7 @@ mainApp.controller( "BookingsController", function( $scope , $http, $location,Da
 			$scope.noOfPages = 1;
 			$scope.currentPage = 1;
 
+			//pagination stuff
 			$scope.setPage = function () {
 				var start = ($scope.currentPage - 1) * $scope.numPerPage
 				var end = start+$scope.numPerPage
@@ -150,7 +154,6 @@ mainApp.controller( "BookingsController", function( $scope , $http, $location,Da
 			};
 
 			$scope.$watch( 'currentPage', $scope.setPage );
-
 
 			//Loading spinner stuff
 			$scope.hideLoader = true;
@@ -174,10 +177,30 @@ mainApp.controller( "BookingsController", function( $scope , $http, $location,Da
 			$scope.submitBookingForm = function(bookingForm){
 
 				if(bookingForm.$valid && $scope.selectedUnit!=null && $scope.selectedRoom!=null ){
-					$scope.nextForm=true;
-					console.log($scope.nextForm);
+					$scope.toggle_spinner()
+					var idNumberExists = DataService.identityNumberExists($scope.identityNumber).then(
+						function onSuccess(response){
+							var data = response.data
+							console.log(data.length)
+							if(data.length>0){
+								alert("You already have a booking")
+								$scope.nextForm = false
+							}
+							else{
+								$scope.nextForm = true
+							}
+
+							$scope.toggle_spinner()
+						},
+						function onFailure(err){
+							console.log('identity number exist fail')
+							console.log(err)
+							$scope.toggle_spinner()
+						}
+					);	
+					
 				}
-				//TODO strict conditions on identity form input for Moss
+				
 			}
 
 			//return to previos form
@@ -186,49 +209,28 @@ mainApp.controller( "BookingsController", function( $scope , $http, $location,Da
 				console.log($scope.nextForm);
 			}
 
-			$scope.uploadFile=function(file){
-				if(file!=null){
-					$scope.fileSelected=true;
-					$scope.selectedFile=file.name
-					console.log(file)
-				}
-			}
-			$scope.FinalizeBooking=function(detailsForm){
-				
-				if(detailsForm.$valid && $scope.file!=null){
-
+			$scope.finalizeBooking=function(detailsForm){
+				if(detailsForm.$valid){
 					var student=new Object();
 					student.tenant_id=$scope.identityNumber
 					student.email=$scope.email
-					student.number=""
-					student.name=$scope.name
-					student.surname=$scope.surname
-					student.gender=$scope.selectedGender
-					student.room="49j"+$scope.selectedUnit+$scope.selectedRoom
-					student.pop=$scope.file;
+					student.contact=$scope.contact
+					student.name=$scope.name.toUpperCase();
+					student.surname=$scope.surname.toUpperCase();
+					student.gender=$scope.selectedGender.toUpperCase();
+					student.room_id=($scope.buildingMap[$scope.selectedBuilding]+$scope.selectedUnit+$scope.selectedRoom).toUpperCase();
+					student.institution = $scope.institutionsMap[$scope.selectedStudyInstitution]
+					student.funding = $scope.selectedFunding.toUpperCase();
 
 					//send the student
 					$scope.toggle_spinner()
-					$scope.booking=DataService.bookRoom(student).then(function onSuccess(response) {
-						
-						if(response.data!="duplicate"){
-							DataService.uploadPop($scope.file,$scope.identityNumber).then(function (resp) {
-									alert("Booking successful");
-									$location.path("/")
-									$scope.toggle_spinner();
-								}, function (resp) {
-										console.log('Error status: ' + resp.status);
-								}, function (evt) {
-										var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
-										console.log('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);
-							});
+					$scope.booking=DataService.bookRoom(student).then(function onSuccess(response) {	
+						var statusText = response["statusText"]
+						if(statusText=="CREATED"){
+							alert('Booking succesful')
+							$scope.toggle_spinner()
+							$location.path("/")
 						}
-						
-						else{
-							alert("You already have a booking");
-							toggle_spinner()
-						}
-						
 					}, function onError(response) {
 						alert("Booking unsuccesful");
 						console.log(response.data)

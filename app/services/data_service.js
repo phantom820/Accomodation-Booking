@@ -1,20 +1,20 @@
 mainApp.factory('dataFactory', function($http) {
         var factory={};
 
-        factory.identityNumberExists = function(identityNumber) {
-            return $http({
-                    method : "GET",
-							url : "http://0.0.0.0:5000/tenants?id="+identityNumber,
-							headers: {
-								"Content-Type": "application/json"
-							}
-					});
-				}
+        factory.identityNumberExists = function(identityNumber) { 
+            var url = "http://127.0.0.1:5000/api/tenants/"+identityNumber.toString()
+            var request = {
+                "url": url,
+                "method": "GET",
+                "headers": {"Content-Type": "application/json"}
+            }
+            return $http(request);
+        }
 
         factory.getRooms = function(searchParams) {
             var query = new URLSearchParams(searchParams).toString();
             var url = "http://127.0.0.1:5000/api/rooms?"+query 
-            request = {
+            var request = {
                 "url": url,
                 "method": "GET",
                 "headers": {"Content-Type": "application/json"}
@@ -23,14 +23,14 @@ mainApp.factory('dataFactory', function($http) {
         }
 
         factory.bookRoom = function(bookingDetails){
-            return $http({
-                method: 'POST',
-                url: 'http://0.0.0.0:5000/tenants',
-                headers: {
-                  'Content-Type': "application/json"
-                },
-                data: bookingDetails
-            });
+            var url = "http://127.0.0.1:5000/api/tenants" 
+            var request = {
+                "url": url,
+                "method": "PUT",
+                "headers": {"Content-Type": "application/json"},
+                "data":bookingDetails
+            }
+            return $http(request);
         }
 
         factory.uploadPop = function (file,identityNumber) {

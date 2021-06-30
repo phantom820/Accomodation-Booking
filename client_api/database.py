@@ -37,7 +37,6 @@ class Database:
 		
 	# get a room with specified room_id
 	def get_room(self,room_id):
-		print(room_id)
 		query = """ SELECT units.unit_id,room_id,type,price FROM bookings.units INNER JOIN bookings.rooms ON bookings.units.unit_id = bookings.rooms.unit_id AND bookings.rooms.room_id=(%s)"""
 		query_params = (room_id,)
 		conn = self.conn
@@ -47,10 +46,13 @@ class Database:
 			conn.commit()
 			query_results = []
 			row = cur.fetchone()
-			unit_id,room_id,type_,price = row
-			room = {'unit_id':unit_id,'room_id':room_id,'type':type_,'price':price}
+			room = {}
+			if row is not None:
+				unit_id,room_id,type_,price = row
+				room = {'unit_id':unit_id,'room_id':room_id,'type':type_,'price':price}
+				query_results.append(room)
 			cur.close()
-			return room
+			return query_results
 
 		except (Exception, psycopg2.Error) as error:
 			cur.close()
@@ -98,8 +100,60 @@ class Database:
 
 		except (Exception, psycopg2.Error) as error:
 			cur.close()
+			print("Failed to update records", error)
+
+	# get a room with specified room_id
+	def get_tenant(self,tenant_id):
+		query = """ SELECT* FROM bookings.tenants WHERE tenant_id=(%s)"""
+		query_params = (tenant_id,)
+		conn = self.conn
+		cur = conn.cursor()
+		try:
+			cur.execute(query,query_params)
+			conn.commit()
+			row = cur.fetchone()
+			query_results = []
+			if row is not None:
+				tenant_id,name,surname,gender,email,contact,room_id,approved = row
+				tenant = {'tenant_id':tenant_id,'name':name,'surname':surname,'gender':gender,'email':email,
+				'contact':contact,'room_id':room_id,"approved":approved}
+				query_results.append(tenant)
+			cur.close()
+			return query_results
+
+		except (Exception, psycopg2.Error) as error:
+			cur.close()
 			print("Failed to select records", error)
 
+	# add a tenant
+	def add_tenant(self,tenant):
+		tenant_insert_query = """INSERT INTO bookings.tenants(tenant_id,name,surname,gender,email,contact,room_id,approved)
+		values(%s,%s,%s,%s,%s,%s,%s,%s)"""
+		tenant_insert_params = (tenant['tenant_id'],tenant['name'],tenant['surname'],tenant['gender'],tenant['email'],
+			tenant['contact'],tenant['room_id'],False)
+		room_update_query = """UPDATE bookings.rooms SET occupied=true WHERE room_id=(%s)"""
+		room_update_params = (tenant['room_id'].upper(),)
+		details_query = """INSERT INTO bookings.details(tenant_id,institution,funding) values(%s,%s,%s)"""
+		details_params = (tenant['tenant_id'],tenant['institution'],tenant['funding'])
+
+		conn = self.conn
+		cur = conn.cursor()
+		try:
+			cur.execute(tenant_insert_query,tenant_insert_params)
+			cur.execute(room_update_query,room_update_params)
+			cur.execute(details_query,details_params)
+
+			conn.commit()
+			cur.close()
+			if cur.rowcount>0:
+				return {'status':'insertion successful'}
+			
+			return {'status':'insertion failed'}
+
+		except (Exception, psycopg2.Error) as error:
+			cur.close()
+			print("Failed to update records", error)
+		
 	# close db connection
 	def close(self):
 		self.conn.close()
