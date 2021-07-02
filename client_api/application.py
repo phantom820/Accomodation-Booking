@@ -1,9 +1,9 @@
-from flask import Flask,request
+from flask import Flask,request,make_response
 from flask import jsonify
 from flask_restful import abort
 from database import Database
 from flask_cors import CORS
-
+import pandas as pd
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -11,6 +11,9 @@ db = Database()
 
 @app.route('/api/')
 def home():
+    a = {'A':[1],'B':[2]}
+    df = pd.DataFrame(a)
+    
     return jsonify('home')
 
 @app.route('/api/rooms/<room_id>',methods=['GET'])
@@ -41,6 +44,11 @@ def put_room():
 
 @app.route('/api/tenants/<tenant_id>',methods=['GET'])
 def get_tenant(tenant_id):
+    tenant = db.get_tenant(tenant_id)
+    return jsonify(tenant)
+
+@app.route('/api/tenants/<tenant_id>/quote',methods=['GET'])
+def get_quote(tenant_id):
     tenant = db.get_tenant(tenant_id)
     return jsonify(tenant)
 

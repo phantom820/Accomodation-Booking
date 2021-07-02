@@ -133,7 +133,7 @@ class Database:
 			tenant['contact'],tenant['room_id'],False)
 		room_update_query = """UPDATE bookings.rooms SET occupied=true WHERE room_id=(%s)"""
 		room_update_params = (tenant['room_id'].upper(),)
-		details_query = """INSERT INTO bookings.details(tenant_id,institution,funding) values(%s,%s,%s)"""
+		details_query = """INSERT INTO bookings.details(tenant_id,institution,funding,booking_date) values(%s,%s,%s,current_date)"""
 		details_params = (tenant['tenant_id'],tenant['institution'],tenant['funding'])
 
 		conn = self.conn

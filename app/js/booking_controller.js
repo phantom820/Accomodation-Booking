@@ -177,6 +177,7 @@ mainApp.controller( "BookingsController", function( $scope , $http, $location,Da
 			$scope.submitBookingForm = function(bookingForm){
 
 				if(bookingForm.$valid && $scope.selectedUnit!=null && $scope.selectedRoom!=null ){
+					console.log(bookingForm.identityNumber.$invalid)
 					$scope.toggle_spinner()
 					var idNumberExists = DataService.identityNumberExists($scope.identityNumber).then(
 						function onSuccess(response){

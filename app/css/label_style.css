@@ -1,0 +1,20 @@
+.label {
+  color: white;
+  padding: 8px;
+ 	margin-left: 30px
+}
+
+.head {
+  color: white;
+  padding: 8px;
+}
+
+
+.form {background-color: #36454f;
+ border-radius: 12px;} /* Green */
+.info {background-color: #292b2c;
+ border-radius: 2px} /* Blue */
+.warning {background-color: #ff9800;} /* Orange */
+.danger {background-color: #f44336;} /* Red */
+.other {background-color: #e7e7e7; color: black;} /* Gray */
+

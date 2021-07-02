@@ -1,22 +1,7 @@
-
 <!-- Loading spinner -->
 <div class="loader-overlay" data-ng-hide="hideLoader">
 	<div class="spin-loader" data-ng-class="{'shrink': shrinkOnHide, 'expand': !shrinkOnHide}"></div>
 </div>
-
-
-<div class="container">
-	<div style="margin-bottom: 0.5cm;">
-	</div>
-	<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-		<a class="navbar-brand" href="#">
-			<!-- <img src="imgs/brand/calogo.png" width="30" height="30" alt=""> -->
-			<h4># Come Stay with Us</h4>
-		</a>
-
-		
-</div>
-
 
 <!-- grid effectively since we may want to put other stuff later -->
 <div >
@@ -182,16 +167,13 @@
 									<div style="margin-bottom: 0.1cm;">
 									</div>					
 									<input type="text" class="form-control" name="identityNumber" aria-describedby="idHelp"   placeholder="Enter identity number" ng-model="identityNumber" ng-pattern="idRegex" required>
-									
 									<!-- <small id="idHelp" class="form-text text-muted">We'll never share your identity number with anyone else.</small> -->
 									<!-- error handling stuff -->
 									<div ng-show="bookingForm.$submitted || bookingForm.identityNumber.$touched">
 										<span ng-show="bookingForm.identityNumber.$error.required" style="color:red;">required field</span>
 										<span ng-show="bookingForm.identityNumber.$error.pattern" style="color:red;">invalid identity number.</span>
 									</div>
-									
 								</div>
-								<button type="button" ng-show="!bookingForm.identityNumber.$invalid" class="btn btn-primary">Generate Quote</button>
 							</div>
 
 							<!-- gender radio buttons -->
@@ -303,4 +285,5 @@
     </div> -->
 	</div>
 </div>
+
 

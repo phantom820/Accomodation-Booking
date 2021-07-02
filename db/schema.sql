@@ -38,6 +38,8 @@ CREATE TABLE bookings.details(
     tenant_id VARCHAR(20) UNIQUE NOT NULL,
 	institution VARCHAR(10) NOT NULL,
     funding VARCHAR(20) NOT NULL,
+		booking_date DATE NOT NULL,
+		approval_date DATE,
 	CONSTRAINT fk_tenant_booking_details
   	FOREIGN KEY(tenant_id) 
   	REFERENCES bookings.tenants(tenant_id)
