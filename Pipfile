@@ -6,15 +6,12 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-flask = "*"
-flask-restful = "*"
-dotenv = "*"
 psycopg2 = "*"
 numpy = "*"
-flask-dotenv = "*"
-flask-cors = "*"
-censusname = "*"
 pandas = "*"
+flask = "*"
+flask-restful = "*"
+flask-cors = "*"
 
 [requires]
 python_version = "3.5"

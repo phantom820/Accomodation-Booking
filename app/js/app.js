@@ -1,4 +1,4 @@
-var mainApp = angular.module("mainApp",['ui.bootstrap.pagination', 'ngAnimate','ngRoute']);
+var mainApp = angular.module("mainApp",['ui.bootstrap.pagination','ngAnimate','ngRoute','ngDialog']);
 
 // configure the routing of the app
 mainApp.config(function ($routeProvider) {       

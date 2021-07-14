@@ -1,8 +1,8 @@
 mainApp.factory('dataFactory', function($http) {
         var factory={};
 
-        factory.identityNumberExists = function(identityNumber) { 
-            var url = "http://127.0.0.1:5000/api/tenants/"+identityNumber.toString()
+        factory.getBuildings = function(){
+            var url = "http://127.0.0.1:5000/api/buildings"
             var request = {
                 "url": url,
                 "method": "GET",
@@ -22,7 +22,17 @@ mainApp.factory('dataFactory', function($http) {
             return $http(request);
         }
 
-        factory.bookRoom = function(bookingDetails){
+        factory.getIdentityNumber = function(identityNumber) { 
+            var url = "http://127.0.0.1:5000/api/tenants/"+identityNumber.toString()
+            var request = {
+                "url": url,
+                "method": "GET",
+                "headers": {"Content-Type": "application/json"}
+            }
+            return $http(request);
+        }
+
+        factory.submitBooking = function(bookingDetails){
             var url = "http://127.0.0.1:5000/api/tenants" 
             var request = {
                 "url": url,
@@ -45,20 +55,16 @@ mainApp.factory('dataFactory', function($http) {
 
 mainApp.service('DataService', function(dataFactory) {
 
-            this.identityNumberExists = function(identityNumber){
-                return dataFactory.identityNumberExists(identityNumber);
-            }
+    this.getBuildings = () => {return dataFactory.getBuildings();}
+    
+    this.getRooms = (type) => {return dataFactory.getRooms(type); }
 
-            this.getRooms = function(type) {
-            return dataFactory.getRooms(type);
-        }
+    this.getIdentityNumber = (identityNumber) => {return dataFactory.getIdentityNumber(identityNumber);}
 
-        this.bookRoom = function(bookingDetails){
-            return dataFactory.bookRoom(bookingDetails)
-        }
+    this.submitBooking = (bookingDetails) => {return dataFactory.submitBooking(bookingDetails);}
 
-        this.uploadPop= function(file,identityNumber){
-            return dataFactory.uploadPop(file,identityNumber);
-        }
-    });
+    this.uploadPop= function(file,identityNumber){
+        return dataFactory.uploadPop(file,identityNumber);
+    }
+});
 

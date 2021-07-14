@@ -4,303 +4,167 @@
 	<div class="spin-loader" data-ng-class="{'shrink': shrinkOnHide, 'expand': !shrinkOnHide}"></div>
 </div>
 
-
-<div class="container">
-	<div style="margin-bottom: 0.5cm;">
-	</div>
-	<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-		<a class="navbar-brand" href="#">
-			<!-- <img src="imgs/brand/calogo.png" width="30" height="30" alt=""> -->
-			<h4># Come Stay with Us</h4>
-		</a>
-
-		
-</div>
-
-
-<!-- grid effectively since we may want to put other stuff later -->
-<div >
-	<!-- form you will see after selection of room and stuff -->
-	<div class="row no-gutters">
-		<div class="col">
-			
-			<div class="container" ng-show="nextForm">
-				<form name="detailsForm" ng-submit="finalizeBooking(detailsForm)"  novalidate>
-					<div class="form-group">
-						<div style="margin-bottom: 1cm;">
-						</div>
-						<div class="form-group row">
-							<label for="exampleInputId" class="label form">Identity number/Passport number</label>
-							<div class="col-md-5">
-								<input type="text" class="form-control" name="identityNumber" aria-describedby="idHelp"  placeholder="Enter identity number" ng-model="identityNumber" ng-readonly="true">									
-							</div>
-						</div>						
-					</div>
-
-					<div class="form-group">
-						<div class="form-group row">
-							<label for="emailAddress" class="label form">Email address</label>
-							<div class="col-md-5">
-								<input type="email" class="form-control" id="emailAddress" placeholder="name@example.com" name="email" ng-model="email" required>
-								<!-- error handling stuff -->
-								<div ng-show="detailsForm.$submitted || detailsForm.email.$touched">
-									<span ng-show="detailsForm.email.$error.required" style="color:red;">required field</span>
-									<span ng-show="!detailsForm.email.$valid && !detailsForm.email.$error.required" style="color:red;">invalid email address</span>
-								</div>	
-							</div>
-						</div>
-					</div>
-
-					<div class="form-group">
-						<div class="form-group row">
-							<label for="confirmEmailAddress" class="label form">Confirm email address</label>
-							<div class="col-md-5">
-								<input type="email" class="form-control" id="confirmEmailAddress" placeholder="name@example.com" name="confirmEmail" ng-model="confirmEmail" reqiured>
-								<!-- error handling stuff -->
-								<div ng-show="detailsForm.$submitted || detailsForm.confirmEmail.$touched">
-									<span ng-show="detailsForm.confirmEmail.$error.required" style="color:red;">required field</span>
-									<span ng-show="!(detailsForm.confirmEmail.$viewValue===detailsForm.email.$viewValue)" style="color:red;">emails do not match</span>
-								</div>	
-							</div>
-						</div>
-					</div>
-
-					<div class="form-group">
-						<div class="form-group row">
-							<label for="name" class="label form">Name</label>
-							<div class="col-md-5">
-								<input type="text" class="form-control" id="name" name="name" ng-model="name" required >
-								<!-- error handling stuff -->
-								<div ng-show="detailsForm.$submitted || detailsForm.name.$touched">
-									<span ng-show="detailsForm.name.$error.required" style="color:red;">required field</span>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div class="form-group">
-						<div class="form-group row">
-							<label for="surname" class="label form">Surname</label>
-							<div class="col-md-5">
-								<input type="text" class="form-control" id="surname" name="surname" ng-model="surname" required >
-								<!-- error handling stuff -->
-								<div ng-show="detailsForm.$submitted || detailsForm.surname.$touched">
-									<span ng-show="detailsForm.surname.$error.required" style="color:red;">required field</span>
-								</div>
-							</div>
-						</div>
-					</div>
-
-
-					<div class="form-group">
-						<div class="form-group row">
-							<label for="contact" class="label form">Contact</label>
-							<div class="col-md-5">
-								<input type="text" class="form-control" id="contact" name="contact" ng-model="contact" required >
-								<!-- error handling stuff -->
-								<div ng-show="detailsForm.$submitted || detailsForm.contact.$touched">
-									<span ng-show="detailsForm.contact.$error.required" style="color:red;">required field</span>
-									<span ng-show="bookingForm.contact.$error.pattern" style="color:red;">invalid contact number.</span>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div class="form-group" >
-						<div class="form-group row">
-							<label for="gender" class="label form">Gender</label>
-							<div class="col-md-5">
-								<input type="text" class="form-control" ng-model="selectedGender" ng-readonly="true" id="gender" >
-							</div>
-						</div>
-					</div>
-
-					<div class="form-group">
-						<div class="form-group row">
-							<label for="building" class="label form">Building</label>
-							<div class="col-md-5">
-								<input type="text" class="form-control" ng-model="selectedBuilding" ng-readonly="true" id="building" >
-							</div>
-						</div>
-					</div>
-
-					<div class="form-group">
-						<div class="form-group row">
-							<label for="fundingSelection" class="label form">Source of funding</label></br>
-							<div class="col-md-5">
-								<select class="form-control" ng-model="selectedFunding" name="fundingSelection" ng-options="option for option in fundingOptions" required></select>
-								<!-- error handling stuff -->
-								<div ng-show="detailsForm.$submitted || detailsForm.fundingSelection.$touched">
-									<span ng-show="detailsForm.fundingSelection.$error.required" style="color:red;">required field</span>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<!-- We do not really need this for now -->
-					<!-- <div class="form-group">
-						<label for="studyYear">Level of Study</label></br>
-						<select ng-model="selectedStudyYear" name="studyYear" ng-options="option for option in studyYears" required></select>
-						error handling stuff
-						<div ng-show="detailsForm.$submitted || detailsForm.studyYear.$touched">
-							<span ng-show="detailsForm.studyYear.$error.required" style="color:red;">required field</span>
-						</div>
-					</div> -->
-
-					<div class="form-group">
-						<div class="form-group row">
-							<label for="studyInstitution" class="label form">Study Institution</label></br>
-							<div class="col-md-5">
-								<select class="form-control" ng-model="selectedStudyInstitution" name="studyInstitution" ng-options="option for option in institutions" required></select>
-								<!-- error handling stuff -->
-								<div ng-show="detailsForm.$submitted || detailsForm.studyInstitution.$touched">
-									<span ng-show="detailsForm.studyInstitution.$error.required" style="color:red;">required field</span>
-								</div>
-							</div>
-								
-						</div>
-					</div>
-
-					<div>
-						<button class="btn btn-warning" ng-click="goBack()">Previous</button>
-						<button type="submit" class="btn btn-warning">Submit</button>
-					</div></br>
-				</form>
-			</div>
-
-			<div style="margin-bottom: 1cm;">
-			</div>
-
-			<!-- booking part (room selection and stuff) -->
-			<div class="row" ng-show="!nextForm">
-				<div class="col">
-					<div class="container" >
-						<form name="bookingForm" ng-submit="submitBookingForm(bookingForm)" novalidate>
-							<div class="form-group row">
-								<label for="identityNumber" class="label form" >Identity number/Passport number</label>
-								<div class="col-md-5">
-									<div style="margin-bottom: 0.1cm;">
-									</div>					
-									<input type="text" class="form-control" name="identityNumber" aria-describedby="idHelp"   placeholder="Enter identity number" ng-model="identityNumber" ng-pattern="idRegex" required>
-									
-									<!-- <small id="idHelp" class="form-text text-muted">We'll never share your identity number with anyone else.</small> -->
-									<!-- error handling stuff -->
-									<div ng-show="bookingForm.$submitted || bookingForm.identityNumber.$touched">
-										<span ng-show="bookingForm.identityNumber.$error.required" style="color:red;">required field</span>
-										<span ng-show="bookingForm.identityNumber.$error.pattern" style="color:red;">invalid identity number.</span>
-									</div>
-									
-								</div>
-								<button type="button" ng-show="!bookingForm.identityNumber.$invalid" class="btn btn-primary">Generate Quote</button>
-							</div>
-
-							<!-- gender radio buttons -->
-							<div class="form-group">
-									<div class="form-group row">
-										<label  for="genderSelection" class="label form">Gender</label>
-										<div class="col-md-5">
-											<label class="radio-inline">
-												<input type="radio" name='genderSelection' ng-model="selectedGender" value="Male" ng-change="onGenderChange()" required>  Male
-											</label>
-											<label class="radio-inline">
-												<input type="radio" name='genderSelection' ng-model="selectedGender" value="Female" ng-change="onGenderChange()" required> Female
-											</label>
-											<!-- error handling stuff -->
-											<div ng-show="bookingForm.$submitted">
-												<span ng-show="bookingForm.genderSelection.$error.required" style="color:red;">required field</span>
-											</div>
-										</div>
-								</div>
-							</div>
-
-							<!-- building drop down -->
-							<div class="form-group">
-								<div class="form-group row">
-									<label for="inputBuilding" class="label form">Building</label>
-									<div class="col-md-5">
-										<select class="form-control" ng-model="selectedBuilding" name="buildingSelection" ng-options="building for building in buildings" ng-change="onBuildingChange()" required></select>
-										<div ng-show="bookingForm.$submitted">
-											<span ng-show="bookingForm.buildingSelection.$error.required" style="color:red;">required field</span>
-										</div>
-									</div>
-								</div>
-							</div>
-
-							<!-- room type drop down -->
-							<div class="form-group">
-								<div class="form-group row">
-									<label for="inputRoomType" class="form label">Room type</label>
-										<div class="col-md-5">
-											<select class="form-control" ng-model="selectedRoomType" name="roomTypeSelection" ng-options="type for type in roomTypes" ng-change="onRoomTypeChange()" required></select>
-											<div ng-show="bookingForm.$submitted">
-												<span ng-show="bookingForm.roomTypeSelection.$error.required" style="color:red;">required field</span>
-											</div>
-										</div>
-								</div>
-							</div>
-
-							<!-- available rooms table | actually should be a pagination here -->
-							<div>
-								<nav class="navbar navbar-dark bg-dark">
-									<span class="navbar-brand mb-0 h1">Available rooms</span>
-								</nav>
-
-								<table id="roomTable" class="table table-bordered table-hover table-sm">
-									<thead >
-										<tr>
-											<th class="th-sm" ng-repeat="x in columns">{{x}}</th>
-										</tr>
-									</thead>
-									<tr ng-repeat="x in data" ng-click="selectRoom(x.unit_id,x.room_id)" ng-class="{'table-warning': x.unit_id===selectedUnit && x.room_id===selectedRoom}">
-										<td>{{ x.building }}</td>
-										<td>{{ x.unit_id }}</td>
-										<td>{{ x.room_id }}</td>
-										<td>{{ x.type }}</td>
-										<td>{{ x.price }}</td>
-									</tr>
-								</table>
-								<pagination num-pages="noOfPages" current-page="currentPage" class="pagination"></pagination>
-							</div>
-
-							<!-- next button -->
-							<div>
-								<button type="submit" class="btn btn-warning">Next</button>
-							</div>
-						</form>
-					</div> <!-- comtainer-->
-				</div> <!-- col-->
-			</div> <!-- row-->
-		</div> <!-- col -->
-		
-		<!-- second column -->
-		<!-- <div class="col-sm">
-			<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-				<a class="navbar-brand" href="#">
-					One of 3 columns
-				</a>
-			</nav>
-    </div> -->
-
-		<!-- Second column -->
-		<!-- <div class="col">
-			<div class="border-left">
-				<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-					<a class="navbar-brand">
-						<h3 style="text-align: center;"> # Booked Already ?</h3>
-					</a>
-				</nav>
-				
-				<div class="row">
-					<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-						<a class="navbar-brand">
-							<h3 style="text-align: center;"> # Booked Already ?</h3>
-						</a>
-					</nav>
+<div class="mydiv">
+	<div class="card">
+		<div class="card body">
+			<div class="container">
+				<div style="margin-bottom: 0.5cm;">
 				</div>
 			
+				<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+				<a class="navbar-brand" href="#">
+					<!-- <img src="imgs/brand/calogo.png" width="30" height="30" alt=""> -->
+					<h4># Come Stay with Us</h4>
+				</a>	
 			</div>
 			
-    </div> -->
+			<div class="row no-gutters">
+				<div class="col">
+					<div class="container">
+						<div style="margin-bottom: 0.3cm;">
+						</div>	
+						<form name="bookingForm" ng-submit="confirmBookingForm(bookingForm)" novalidate>
+							<div class="form-row">
+								<div class="form-group col-md-4">
+									<label for="inputIdentityNumber">Identity Number/Passport Number</label>
+									<input type="text" class="form-control" name="inputIdentityNumber" ng-model="identityNumber" ng-pattern="identityNumberRegex" required>
+									<div ng-show="bookingForm.$submitted || bookingForm.inputIdentityNumber.$touched">
+										<span ng-show="bookingForm.inputIdentityNumber.$error.required" style="color:red;">required field</span>
+										<span ng-show="bookingForm.inputIdentityNumber.$error.pattern" style="color:red;">invalid identity number.</span>
+									</div>
+								</div>
+								<div class="form-group col-md-4">
+									<label for="inputEmail">Email Address</label>
+									<input type="email" class="form-control" name="inputEmail" placeholder="example@mail.com" ng-model="emailAddress" required>
+									<div ng-show="bookingForm.$submitted || bookingForm.inputEmail.$touched">
+										<span ng-show="bookingForm.inputEmail.$error.required" style="color:red;">required field</span>
+										<span ng-show="!bookingForm.inputEmail.$valid && !bookingForm.inputEmail.$error.required" style="color:red;">invalid email address</span>
+									</div>	
+								</div>
+								<div class="form-group col-md-4">
+									<label for="confirmEmail">Confirm Email Address</label>
+									<input type="email" class="form-control" name="confirmEmail" placeholder="" ng-model="confirmEmailAddress" required>
+									<div ng-show="bookingForm.$submitted || bookingForm.confirmEmail.$touched">
+										<span ng-show="bookingForm.confirmEmail.$error.required" style="color:red;">required field</span>
+										<span ng-show="!(bookingForm.confirmEmail.$viewValue===bookingForm.inputEmail.$viewValue)" style="color:red;">emails do not match</span>
+									</div>	
+								</div>
+							</div>
+							<div class="form-row">
+								<div class="form-group col-md-4">
+									<label for="inputName">Name</label>
+									<input type="text" class="form-control" name="inputName" placeholder="" ng-model="name" required>
+									<div ng-show="bookingForm.$submitted || bookingForm.inputName.$touched">
+										<span ng-show="bookingForm.inputName.$error.required" style="color:red;">required field</span>
+									</div>
+								</div>
+								<div class="form-group col-md-4">
+									<label for="inputSurname">Surname</label>
+									<input type="text" class="form-control" name="inputSurname" placeholder="" ng-model="surname" required>
+									<div ng-show="bookingForm.$submitted || bookingForm.inputSurname.$touched">
+										<span ng-show="bookingForm.inputSurname.$error.required" style="color:red;">required field</span>
+									</div>
+								</div>
+								<div class="form-group col-md-4">
+									<label for="inputContactNumber">Contact Number</label>
+									<input type="text" class="form-control" name="inputContactNumber" placeholder="" ng-model="contactNumber" required>
+									<div ng-show="bookingForm.$submitted || bookingForm.inputContactNumber.$touched">
+										<span ng-show="bookingForm.inputContactNumber.$error.required" style="color:red;">required field</span>
+									</div>
+								</div>
+							</div>
+
+							<div class="form-row">
+								<div class="form-group col-md-5">
+									<label for="inputInstitution">Study Institution</label>
+									<select name="inputInstitution" class="form-control" ng-model="institution" required>
+										<option >University of the Witwatersrand</option>
+										<option>Rosebank College</option>
+									</select>
+								</div>
+
+								<div class="form-group col-md-5">
+									<label for="inputFunding">Source of Funding</label>
+									<select name="inputFunding" class="form-control" ng-model="funding" required>
+										<option >Private/Self Funding</option>
+										<option>NSFAS</option>
+										<option>Private Sponsor</option>
+									</select>
+								</div>
+							</div>
+							
+							<div class="form-row">
+								<div class="form-group col-md-4">
+									<label for="inputBuilding">Building</label>
+									<select name="inputBuilding" class="form-control" ng-model="building" ng-change="getRooms()" ng-options = "building.name for building in buildings" required>
+									</select>
+									<div ng-show="bookingForm.$submitted || bookingForm.inputBuilding.$touched">
+										<span ng-show="bookingForm.inputBuilding.$error.required" style="color:red;">required field</span>
+									</div>
+								</div>
+
+								<div class="form-group col-md-4">
+									<label for="inputGender">Gender</label>
+									<select name="inputGender" class="form-control" ng-model="gender" ng-change="getRooms()" required>
+										<option >Male</option>
+										<option>Female</option>
+									</select>
+									<div ng-show="bookingForm.$submitted || bookingForm.inputGender.$touched">
+										<span ng-show="bookingForm.inputGender.$error.required" style="color:red;">required field</span>
+									</div>
+								</div>
+
+								<div class="form-group col-md-4">
+									<label for="inputRoomType">Room Type</label>
+									<select name="inputRoomType" class="form-control" ng-model="roomType" ng-change="getRooms()" required>
+										<option >2 Sharing</option>
+										<option>3 Sharing</option>
+									</select>
+									<div ng-show="bookingForm.$submitted || bookingForm.inputRoomType.$touched">
+										<span ng-show="bookingForm.inputRoomType.$error.required" style="color:red;">required field</span>
+									</div>
+								</div>
+							</div>
+
+							<div class="form-row">
+								<div class="container">
+									<nav class="navbar navbar-dark bg-dark">
+										<span class="navbar-brand mb-0 h1">Available rooms</span>
+									</nav>
+	
+									<table class="table table-bordered table-hover table-sm">
+										<thead >
+											<tr>
+												<th class="th-sm" ng-repeat="x in columns">{{x}}</th>
+											</tr>
+										</thead>
+										<tr ng-repeat="x in data" ng-click="selectRoom(x)"  ng-class="{'table-warning': x==room}"	>
+											<td>{{ x.order }}</td>
+											<td>{{ x.building }}</td>
+											<td>{{ x.unit_id }}</td>
+											<td>{{ x.room_no }}</td>
+											<td>{{ x.type }}</td>
+											<td>{{ x.price }}</td>
+										</tr>
+									</table>
+									<pagination num-pages="noOfPages" current-page="currentPage" class="pagination"></pagination>
+								</div>
+							</div>
+
+							<!-- <div class="form-group">
+								<div class="form-check">
+									<input class="form-check-input" type="checkbox" id="gridCheck">
+									<label class="form-check-label" for="gridCheck">
+										Check me out
+									</label>
+								</div>
+							</div>
+							 -->
+							<button type="submit" class="btn btn-primary">Submit</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
-

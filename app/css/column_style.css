@@ -2,3 +2,22 @@
     padding-right:0;
     padding-left:0;
 }
+
+
+.card {
+        margin: 0 auto;
+        float: none; /* Added */
+        padding-bottom:10px;
+        margin-bottom: 15px; /* Added */
+        width: 90%;
+        padding: 0 auto
+        
+}
+
+.mydiv {
+	 background-color:rgb(230, 142, 1);
+   /*background-image: url('../imgs/background/background.png');
+   /*background-repeat:no-repeat;
+   /*background-size:contain;
+   /* height:200px;width:1200px; */
+}

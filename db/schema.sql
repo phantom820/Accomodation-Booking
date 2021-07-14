@@ -1,47 +1,63 @@
-CREATE SCHEMA IF NOT EXISTS bookings
+-- schema
+CREATE SCHEMA IF NOT EXISTS rem
     AUTHORIZATION postgres;
-    
 
-CREATE TABLE bookings.units (
-	unit_id VARCHAR(10) PRIMARY KEY,
-	gender VARCHAR (6) NOT NULL,
-	type VARCHAR ( 50 ) NOT NULL,
-	building VARCHAR ( 50 )  NOT NULL
+-- buildings
+CREATE TABLE rem.buildings (
+	building_id VARCHAR(10) PRIMARY KEY,
+	name VARCHAR(100),
+	address_street VARCHAR(100),
+	address_suburb VARCHAR(100),
+	address_city VARCHAR(100),
+	address_postal_code VARCHAR(100)
 );
 
-CREATE TABLE bookings.rooms (
+-- building units
+CREATE TABLE rem.units(
+	unit_id VARCHAR(10) PRIMARY KEY NOT NULL,
+	gender VARCHAR (6) NOT NULL,
+	type VARCHAR ( 4 ) NOT NULL,
+	building_id VARCHAR(10),
+	CONSTRAINT fk_unit
+		FOREIGN KEY(building_id) 
+	  REFERENCES rem.buildings(building_id)
+
+);
+
+-- rooms
+CREATE TABLE rem.rooms (
 	room_id VARCHAR(10) PRIMARY KEY,
-	unit_id VARCHAR ( 10 ) NOT NULL,
 	occupied bool DEFAULT FALSE,
 	price INT DEFAULT 5500,
+	unit_id VARCHAR (10) NOT NULL,
 	CONSTRAINT fk_room
       FOREIGN KEY(unit_id) 
-	  REFERENCES bookings.units(unit_id)
+	  REFERENCES rem.units(unit_id)
 );
 
-
-CREATE TABLE bookings.tenants (
+-- tenants
+CREATE TABLE rem.tenants (
 	tenant_id VARCHAR(20) PRIMARY KEY,
 	name VARCHAR ( 50 ) NOT NULL,
 	surname VARCHAR ( 50 ) NOT NULL,
 	gender VARCHAR(6),
 	email VARCHAR ( 255 ) UNIQUE NOT NULL,
 	contact VARCHAR(10),
-	room_id VARCHAR(10) UNIQUE NOT NULL,
 	approved bool DEFAULT FALSE,
+	room_id VARCHAR(10) UNIQUE NOT NULL,
 	CONSTRAINT fk_tenant
-      FOREIGN KEY(room_id) 
-	  REFERENCES bookings.rooms(room_id)
+		FOREIGN KEY(room_id) 
+	  REFERENCES rem.rooms(room_id)
 );
 
-CREATE TABLE bookings.details(
-    tenant_id VARCHAR(20) UNIQUE NOT NULL,
-	institution VARCHAR(10) NOT NULL,
-    funding VARCHAR(20) NOT NULL,
-		booking_date DATE NOT NULL,
-		approval_date DATE,
-	CONSTRAINT fk_tenant_booking_details
+-- tenant_details
+CREATE TABLE rem.tenant_application_details(
+	institution VARCHAR(250) NOT NULL,
+	funding VARCHAR(20) NOT NULL,
+	application_date DATE NOT NULL,
+	approval_date DATE,
+	tenant_id VARCHAR(20) UNIQUE NOT NULL,
+	CONSTRAINT fk_tenant_application_details
   	FOREIGN KEY(tenant_id) 
-  	REFERENCES bookings.tenants(tenant_id)
+  	REFERENCES rem.tenants(tenant_id)
 );
-

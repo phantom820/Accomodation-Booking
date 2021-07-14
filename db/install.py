@@ -1,50 +1,54 @@
 import psycopg2
+import json
 import numpy as np
-import censusname
-# from dotenv import load_dotenv
-# import os
-
-''' till we get fox for dotenv'''
-# load_dotenv()
-# POSTGRES_HOST = os.getenv('POSTGRES_HOST')
-# POSTGRES_PORT = os.getenv('POSTGRES_PORT')
-# POSTGRES_DATABASE = os.getenv('POSTGRES_DATABASE')
-# POSTGRES_USERNAME = os.getenv('POSTGRES_USERNAME')
-# POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
-
-
-'''temporary'''
-POSTGRES_HOST="localhost"
-POSTGRES_PORT="5432"
-POSTGRES_DATABASE="accomodation_management"
-POSTGRES_USERNAME="postgres"
-POSTGRES_PASSWORD="postgres"
+import pandas as pd
 
 class Database:
-	def __init__(self):
-		self.conn = psycopg2.connect(user=POSTGRES_USERNAME, password=POSTGRES_PASSWORD,
+	def __init__(self,db_config_path):
+		try:
+			with open(db_config_path,'r') as f:
+				db_config_json = json.load(f)
+				POSTGRES_HOST = db_config_json["HOST"]
+				POSTGRES_PORT = db_config_json["PORT"]
+				POSTGRES_DATABASE = db_config_json["DATABASE"]
+				POSTGRES_USERNAME = db_config_json["USERNAME"]
+				POSTGRES_PASSWORD = db_config_json["PASSWORD"]
+				self.conn = psycopg2.connect(user=POSTGRES_USERNAME, password=POSTGRES_PASSWORD,
                                   host=POSTGRES_HOST,port=POSTGRES_PORT,database=POSTGRES_DATABASE)
 
-	# get units filtering using parameters
-	def seed_db(self,units,rooms,tenants):
+		except:
+			print('Exception occured could not load db config file at',db_config_path)
+		
+	
+	def seed_db(self,buildings,units,rooms,tenants):
 		conn = self.conn
 		try:
 			cur = conn.cursor()
-			units_query = """INSERT INTO bookings.units(unit_id,gender,type,building) values(%s,%s,%s,%s)"""
-			for i in range(len(units)):
-				units_query_params = units[i]
+			
+			buildings_query = """INSERT INTO rem.buildings(building_id,name,address_street,address_suburb,address_city,address_postal_code) 
+			values(%s,%s,%s,%s,%s,%s) """
+			for index,row in buildings.iterrows():
+				building_query_params = tuple(row.values)
+				cur.execute(buildings_query,building_query_params)
+		
+			units_query = """INSERT INTO rem.units(unit_id,gender,type,building_id) values(%s,%s,%s,%s)"""
+			for index,row in units.iterrows():
+				units_query_params = tuple(row.values)
 				cur.execute(units_query,units_query_params)
 
-			rooms_query = """INSERT INTO bookings.rooms(room_id,unit_id,occupied,price) values(%s,%s,%s,%s)"""
-			for i in range(len(rooms)):
-				rooms_query_params = rooms[i]
+			rooms_query = """INSERT INTO rem.rooms(room_id,unit_id,occupied,price) values(%s,%s,%s,%s)"""
+			for index,row in rooms.iterrows():
+				rooms_query_params = tuple(row.values)
 				cur.execute(rooms_query,rooms_query_params)
-			
-			tenants_query = """INSERT INTO bookings.tenants(tenant_id,name,surname,gender,email,contact,room_id) values(%s,%s,%s,%s,%s,%s,%s)"""
-			for i in range(len(tenants)):
-				tenants_query_params =tenants[i]
-				cur.execute(tenants_query,tenants_query_params)
 
+			
+			tenants_query = """INSERT INTO rem.tenants(tenant_id,name,surname,gender,email,contact,approved,room_id) 
+			values(%s,%s,%s,%s,%s,%s,%s,%s)"""
+			for index,row in tenants.iterrows():
+				row['contact'] = '0'+str(row['contact'])
+				tenants_query_params = tuple(row.values)
+				cur.execute(tenants_query,tenants_query_params)
+			
 			conn.commit()
 			conn.close()
 
@@ -57,53 +61,20 @@ class Database:
 		self.conn.close()
 
 
+# load sythetic data from csv files
+def load_data(buildings_path,units_path,rooms_path,tenants_path):
+	buildings_df = pd.read_csv(buildings_path)
+	units_df = pd.read_csv(units_path)
+	rooms_df = pd.read_csv(rooms_path)
+	tenants_df = pd.read_csv(tenants_path)
 
-def synthetic_data(n):
-	genders = ["MALE","FEMALE"]
-	types = ["2","3"]
-	buildings = ["49J","80J"]
-	occupied = [False,True]
-	division = {"2":['A','B'],'3':['A','B','C']}
-	prices = {"2":5500,"3":4500}
-
-	units = []
-	rooms = []
-	tenants = []
-	count = 0
-	identity = 9706095341086
-	for i in range(n):
-		index = int(np.round(np.random.uniform(0,1)))
-		unit_id = buildings[index]+str(1101+count)
-		gender = genders[index]
-		type_ = types[index]
-		building = buildings[index]
-		unit = (unit_id,gender,type_,building)
-		units.append(unit)
-		room_divs = division[type_]
-		for r in room_divs:
-			idx = int(np.round(np.random.uniform(0,1)))
-			room_id = unit_id+r	
-			occ = occupied[idx]
-			room = (room_id,unit_id,occ,prices[type_])	
-			rooms.append(room)
-
-			# there is a tenant
-			if occ == True:
-				tenant_id = str(identity)
-				info = censusname.generate().split(' ')
-				name,surname = info[0],info[1]
-				email = name+surname+str(count)+'@gmail.com'
-				contact = '07173399'+str(np.random.randint(10,40))
-				tenant = (tenant_id,name,surname,gender,email,contact,room_id)
-				tenants.append(tenant)
-				identity = identity+1
-		count = count+1
-
-	return units,rooms,tenants
-
+	return buildings_df,units_df,rooms_df,tenants_df
 
 if __name__=='__main__':
-	db = Database()
-	units,rooms,tenants, = synthetic_data(500)
-	db.seed_db(units,rooms,tenants)
-	# print(tenants)
+	buildings_path = 'db/data/buildings.csv'
+	units_path = 'db/data/units.csv'
+	rooms_path = 'db/data/rooms.csv'
+	tenants_path = 'db/data/tenants.csv'
+	buildings,units,rooms,tenants = load_data(buildings_path,units_path,rooms_path,tenants_path)
+	db = Database('config/db_config.json')
+	db.seed_db(buildings,units,rooms,tenants)

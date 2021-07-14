@@ -3,6 +3,7 @@
 
 
 
+
 # If psql is not available, then exit
 if ! command -v psql > /dev/null; then
   echo "This script requires psql to be installed and on your PATH ..."
@@ -12,8 +13,18 @@ fi
 # change dir
 cd db
 
-# conn info
-source .env
+# args
+POSTGRES_HOST=$1
+POSTGRES_PORT=$2
+POSTGRES_USERNAME=$3
+POSTGRES_DATABASE="residence_management"
+
+echo -n POSTGRES PASSWORD: 
+read -s POSTGRES_PASSWORD
+echo
+
+# Run Command
+# echo $POSTGRES_PASSWORD
 
 # schema
 sql="$(<"schema.sql")"
@@ -21,7 +32,7 @@ sql="$(<"schema.sql")"
 #connect go drop
 CONFIG="dbname=postgres host=$POSTGRES_HOST port=$POSTGRES_PORT user=$POSTGRES_USERNAME password=$POSTGRES_PASSWORD"
 psql "$CONFIG" -c "DROP DATABASE IF EXISTS $POSTGRES_DATABASE"
-psql "$CONFIG" -c "CREATE DATABASE $POSTGRES_DATABASE"
+psql "$CONFIG" -c "CREATE DATABASE residence_management"
 
 # Connect to the database, run the query, then disconnect
 PGPASSWORD="${POSTGRES_PASSWORD}" psql -t -A \
@@ -34,4 +45,5 @@ PGPASSWORD="${POSTGRES_PASSWORD}" psql -t -A \
 # run the install.py script
 echo "seeding db"
 cd ..
+
 pipenv run python db/install.py

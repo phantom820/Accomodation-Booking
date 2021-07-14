@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "c3c672ed2f9d7eacf676bf87b66f73c5fe2e1002153dd26a6daaf272232dd932"
+            "sha256": "9e83e3cea7f3a4ae97a7f8f23a2c2075ea959919981f9ae8b410165e88867775"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -23,27 +23,12 @@
             ],
             "version": "==9.0.1"
         },
-        "censusname": {
-            "hashes": [
-                "sha256:305f40af9e7738e3c3ddb85da16cdaccb09cd5a7f307242519eb6f3ff71f3673",
-                "sha256:d1d1c27ec8840348a90411e186320181d80ba457e25d20cf9107b75607f8aa67"
-            ],
-            "index": "pypi",
-            "version": "==0.2.2"
-        },
         "click": {
             "hashes": [
                 "sha256:d2b5255c7c6349bc1bd1e59e08cd12acbbd63ce649f2588755783aa94dfb6b1a",
                 "sha256:dacca89f4bfadd5de3d7489b7c8a566eee0d3676333fbb50030263894c38c0dc"
             ],
             "version": "==7.1.2"
-        },
-        "dotenv": {
-            "hashes": [
-                "sha256:b58d2ab3f83dbd4f8a362b21158a606bee87317a9444485566b3c8f0af847091"
-            ],
-            "index": "pypi",
-            "version": "==0.0.5"
         },
         "flask": {
             "hashes": [
@@ -60,13 +45,6 @@
             ],
             "index": "pypi",
             "version": "==3.0.10"
-        },
-        "flask-dotenv": {
-            "hashes": [
-                "sha256:8ef7d21877fdebdb46276da07ccb9a55b45fa657e476b0c7b7f5f1fa071057f6"
-            ],
-            "index": "pypi",
-            "version": "==0.1.2"
         },
         "flask-restful": {
             "hashes": [
