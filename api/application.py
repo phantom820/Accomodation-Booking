@@ -1,19 +1,46 @@
-from flask import Flask,request,make_response
+from flask import Flask, json,request,make_response
+from flask import render_template
 from flask import jsonify
 from flask_restful import abort
 from database import Database
 from flask_cors import CORS
+from flask_mail import Mail, Message
 import pandas as pd
+from collections import OrderedDict
+import attachment
 
+
+# configure stuff
 app = Flask(__name__)
+with open('config/mail_config.json','r') as f:
+            mail_config_json = json.load(f)
+app.config['MAIL_SERVER'] = mail_config_json['MAIL_SERVER']
+app.config['MAIL_PORT'] = mail_config_json['MAIL_PORT']
+app.config['MAIL_USERNAME'] = mail_config_json['MAIL_USERNAME']
+app.config['MAIL_PASSWORD'] = mail_config_json['MAIL_PASSWORD']
+app.config['MAIL_USE_TLS'] = mail_config_json['MAIL_USE_TLS']
+app.config['MAIL_USE_SSL'] = mail_config_json['MAIL_USE_SSL']
 cors = CORS(app)
+mail = Mail(app)
 db = Database('config/db_config.json')
 
-@app.route('/api/')
+@app.route('/',methods=['GET','POST'])
 def home():
-    a = {'A':[1],'B':[2]}
-    df = pd.DataFrame(a)
-    return jsonify('home')
+    return render_template('booking_reference.html',result = {'IDENTITY NUMBER':'9906095341086','NAME':'TSHEPO','SURNAME':'NKAMBULE'})
+
+@app.route('/api/')
+def email():
+    msg = Message('Booking Receipt Confirmation', sender = 'phantomdanny980@gmail.com', recipients = ['nkambule773@gmail.com'])
+    msg_txt = attachment.generate_attachment('')
+    msg.body = msg_txt
+    # attachment 
+    with app.open_resource('attachments/ca_booking.pdf') as fp:
+        msg.attach("ca_booking.pdf","application/octet-stream",fp.read())
+    try:
+        mail.send(msg)
+        return "Sent"
+    except:
+        return "Failed to send" 
 
 @app.route('/api/buildings/',methods=['GET'])
 def get_buildings():
@@ -40,7 +67,7 @@ def put_room():
     args = request.get_json()        
     for arg_key in arg_keys:
         if arg_key not in args:
-            abort(404)
+            return "FAILUR",404
     room_id = args['room_id']
     occupied = args['occupied']
     result = db.update_room(room_id,occupied)
@@ -61,8 +88,32 @@ def get_quote(tenant_id):
 def put_tenant():
     args = request.get_json()
     result = db.add_tenant(args)
-    return jsonify(result),201
+    if result is not None:
+        if result['status'] == 0 or True:            
+            msg = Message('Booking Receipt Confirmation', sender = 'phantomdanny980@gmail.com', recipients = ['nkambule773@gmail.com'])
+            msg_text = attachment.generate_attachment(args)
+            if msg_text is not None:
+                msg.body = msg_text
+                # attachment 
+                with app.open_resource('attachments/ca_booking.pdf') as fp:
+                    msg.attach("ca_booking.pdf","application/octet-stream",fp.read())
+                try:
+                    mail.send(msg)
+                    return jsonify(result),201
 
+                except:
+                    print("Could not send email")
+                    return jsonify({"failure"}),404
+
+            else:
+                return jsonify({"failure"}),404
+        else:
+            return jsonify(result),400
+
+    return jsonify({'status':1,'error message':'did not return'})
+
+# save the html then convert it to pdf
 
 if __name__ == '__main__':
     app.run(debug=True)
+

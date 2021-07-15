@@ -12,6 +12,8 @@ pandas = "*"
 flask = "*"
 flask-restful = "*"
 flask-cors = "*"
+flask-mail = "*"
+pdfkit = "*"
 
 [requires]
 python_version = "3.5"

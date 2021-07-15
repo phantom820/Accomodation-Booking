@@ -163,14 +163,15 @@ class Database:
 			conn.commit()
 			cur.close()
 			if cur.rowcount>0:
-				return {'status':'insertion successful'}
+				return {'status':0}
 			
-			return {'status':'insertion failed'}
+			return {'status':1}
 
 		except (Exception, psycopg2.Error) as error:
 			cur.close()
-			print("Failed to update records", error)
-		
+			result = {'status':1,'error':str(error)}
+			return result
+			
 	# close db connection
 	def close(self):
 		self.conn.close()

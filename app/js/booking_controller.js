@@ -140,6 +140,8 @@ mainApp.controller( "BookingsController", function( $scope , $http, $location,Da
 			tenant.surname=$scope.surname.toUpperCase();
 			tenant.gender=$scope.gender.toUpperCase();
 			tenant.room_id=$scope.room.room_id;
+			tenant.building=$scope.building
+			tenant.room_detail = $scope.room;
 			tenant.institution = $scope.institution
 			tenant.funding = $scope.funding
 			console.log(tenant)
@@ -154,6 +156,8 @@ mainApp.controller( "BookingsController", function( $scope , $http, $location,Da
 					}
 				},
 				function onError(error){
+					alert('Booking Unsuccesful')
+					$scope.toggle_spinner()
 					console.log("Error occured when booking")
 					console.log(error)
 				}

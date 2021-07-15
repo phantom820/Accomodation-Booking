@@ -1,0 +1,5 @@
+# ignore all pdf
+*.pdf
+
+# ignore 
+*.json
