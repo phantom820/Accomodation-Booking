@@ -1,5 +1,8 @@
 # ignore all pdf
 *.pdf
 
-# ignore 
-*.json
+# ignore config files
+/config
+
+# ignore attachments
+/api/attachments

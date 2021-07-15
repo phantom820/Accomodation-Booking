@@ -1,7 +1,0 @@
-{
-	"HOST":"localhost",
-	"PORT":"5432",
-	"DATABASE":"residence_management",
-	"USERNAME":"postgres",
-	"PASSWORD":"postgres"
-}
