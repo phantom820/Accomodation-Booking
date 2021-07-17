@@ -1,5 +1,7 @@
 mainApp.controller( "BookingsController", function( $scope , $http, $location,DataService,ngDialog) {
 	
+
+	
 		// regular expression to check for SA id number pattern
 		$scope.identityNumberRegex = '(([0-9][0-9][0-1][0-9][0-3][0-9])([0-9][0-9][0-9][0-9])([0-1])([0-9])([0-9]))'
 
@@ -110,7 +112,7 @@ mainApp.controller( "BookingsController", function( $scope , $http, $location,Da
 				$scope.toggle_spinner()
 				var identityNumber = DataService.getIdentityNumber($scope.identityNumber).then(
 					function onSuccess(response){
-						if(response.data==null){
+						if(true){
 							$scope.dialog = $scope.openBookingDetailsDialog();
 						}
 						else{
@@ -139,12 +141,11 @@ mainApp.controller( "BookingsController", function( $scope , $http, $location,Da
 			tenant.name=$scope.name.toUpperCase();
 			tenant.surname=$scope.surname.toUpperCase();
 			tenant.gender=$scope.gender.toUpperCase();
-			tenant.room_id=$scope.room.room_id;
-			tenant.building=$scope.building
-			tenant.room_detail = $scope.room;
+			tenant.building = $scope.building
+			tenant.room_id = $scope.room['room_id']
+			tenant.room = $scope.room;
 			tenant.institution = $scope.institution
 			tenant.funding = $scope.funding
-			console.log(tenant)
 			$scope.toggle_spinner()
 			var submitBooking = DataService.submitBooking(tenant).then(
 				function onSuccess(response){
@@ -154,12 +155,22 @@ mainApp.controller( "BookingsController", function( $scope , $http, $location,Da
 						$scope.toggle_spinner()
 						$location.path("/")
 					}
+
+					else{
+						$scope.toggle_spinner()
+						alert('Booking Failed')
+						$location.path('/')
+					}
+
+
 				},
 				function onError(error){
 					alert('Booking Unsuccesful')
 					$scope.toggle_spinner()
 					console.log("Error occured when booking")
 					console.log(error)
+					// $location.path('/')
+
 				}
 			)
 			$scope.dialog.close()
@@ -173,7 +184,22 @@ mainApp.controller( "BookingsController", function( $scope , $http, $location,Da
 			});
 			return dialog
 		}
-		// init data
-		$scope.getBuildings()
-					
+		
+			// init 
+			function init(){
+				$scope.toggle_spinner()
+				DataService.getBuildings().then(
+					function onSuccess(response){
+						$scope.buildings = response.data
+						console.log(response.data)
+						$scope.toggle_spinner()
+					},
+					function onError(error){
+						$scope.toggle_spinner()
+						console.log("Error occured when fetching buildings")
+						console.log(error)
+				});			
+			}
+			
+			init();
 });

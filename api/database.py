@@ -13,19 +13,18 @@ class Database:
 				POSTGRES_PASSWORD = db_config_json["PASSWORD"]
 				self.conn = psycopg2.connect(user=POSTGRES_USERNAME, password=POSTGRES_PASSWORD,
                                   host=POSTGRES_HOST,port=POSTGRES_PORT,database=POSTGRES_DATABASE)
-
 		except:
 			print('Exception occured could not load db config file at',db_config_path)
 
 	# get buildings		
 	def get_buildings(self):
-		query = """select row_to_json(t) from (select* from rem.buildings)t;"""
+		query = """SELECT row_to_json(t) FROM (SELECT* FROM REM.BUILDINGS)t;"""
 		conn = self.conn
 		cur = conn.cursor()
 		try:
 			cur.execute(query)
 			conn.commit()
-			rows = cur.fetchall()
+			rows = cur.fetchall()	
 			results = []
 			if len(rows)!=0:
 				for row in rows:
@@ -34,12 +33,15 @@ class Database:
 			return results
 
 		except (Exception, psycopg2.Error) as error:
-			cur.close()
-			print("Failed to select building records",error)
+			print("Failed to select building records with error : ",error)
+		
+		finally:
+			conn.rollback()
+
 			
 	# get units filtering using parameters
 	def get_units(self,gender,type_,building):
-		query = """select row_to_json(t) from (select* from rem.units where gender=(%s) and type=(%s) and building_id=(%s))t;"""
+		query = """SELECT row_to_json(t) from (SELECT* FROM REM.UNITS WHERE gender=(%s) AND type=(%s) AND building_id=(%s))t;"""
 		query_params = (gender,type_,building)
 		conn = self.conn
 		cur = conn.cursor()
@@ -55,12 +57,14 @@ class Database:
 			return results
 
 		except (Exception, psycopg2.Error) as error:
-			cur.close()
-			print("Failed to select  records of units", error)
+			print("Failed to select  records of units with error : ", error)
 		
+		finally:
+			conn.rollback()
+
 	# get rooms filtering using the params
 	def get_rooms(self,gender,type_,building_id,occupied):
-		query = """select row_to_json(t) from (select* from rem.rooms INNER JOIN rem.units on rooms.unit_id=units.unit_id 
+		query = """SELECT row_to_json(t) from (SELECT* FROM rem.rooms INNER JOIN rem.units ON rooms.unit_id=units.unit_id 
 						   	and units.gender=(%s) AND units.type=(%s) AND units.building_id=(%s) AND rem.rooms.occupied=(%s))t;"""
 		query_params = (gender,type_,building_id,occupied)
 		conn = self.conn
@@ -77,9 +81,12 @@ class Database:
 			return results
 
 		except (Exception, psycopg2.Error) as error:
-			cur.close()
-			print("Failed to select records", error)
+			print("Failed to select room records with error : ", error)
 	
+		finally:
+			conn.rollback()
+
+
 	# get a room with specified room_id
 	def get_room(self,room_id):
 		query = """select row_to_json(t) from (select* from rem.rooms INNER JOIN rem.units on rooms.unit_id=units.unit_id 
@@ -99,8 +106,10 @@ class Database:
 			return results[0]
 			
 		except (Exception, psycopg2.Error) as error:
-			cur.close()
-			print("Failed to select records", error)
+			print("Failed to select room record with error : ", error)
+
+		finally:
+			conn.rollback()
 
 	# update a room occupation
 	def update_room(self,room_id,occupied):
@@ -113,34 +122,32 @@ class Database:
 			conn.commit()
 			cur.close()
 			if cur.rowcount>0:
-				return {'status':'update successful'}
-			
-			return {'status':'update failed'}
+				return {'status':0}
+			return {'status':1}
 		
-
 		except (Exception, psycopg2.Error) as error:
-			cur.close()
-			print("Failed to update records", error)
+			print("Failed to update record with error : ", error)
 
-	# get a room with specified room_id
+		finally:
+			conn.rollback()
+
+	# get a tenant with specified tenant_id
 	def get_tenant(self,tenant_id):
-		query = """select row_to_json(t) from (SELECT* FROM rem.tenants where tenant_id=(%s))t"""
+		query = """select row_to_json(t) from (SELECT* FROM rem.tenants where tenant_id=%s)t"""
 		query_params = (tenant_id,)
 		conn = self.conn
 		cur = conn.cursor()
 		try:
 			cur.execute(query,query_params)
 			conn.commit()
-			results = []
 			rows = cur.fetchall()
-			for row in rows:
-				results.append(row[0])
-			cur.close()
-			return results[0]
+			return rows
 
 		except (Exception, psycopg2.Error) as error:
-			cur.close()
-			print("Failed to select records", error)
+			print("Failed to select tenant record with error : ", error)
+
+		finally:
+			conn.rollback()
 
 	# add a tenant
 	def add_tenant(self,tenant):
@@ -164,17 +171,17 @@ class Database:
 			cur.close()
 			if cur.rowcount>0:
 				return {'status':0}
-			
 			return {'status':1}
 
 		except (Exception, psycopg2.Error) as error:
-			cur.close()
-			result = {'status':1,'error':str(error)}
-			return result
+			print("Failed to add tenant record with error : ",error)
+
+		finally:
+			conn.rollback()
 			
 	# close db connection
 	def close(self):
-		self.conn.close()
+		self.conn.rollback()
 
 # if __name__=='__main__':
 # 	db = Database('config/db_config.json')

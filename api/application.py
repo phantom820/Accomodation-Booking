@@ -1,16 +1,15 @@
 from flask import Flask, json,request,make_response
 from flask import render_template
 from flask import jsonify
-from flask_restful import abort
 from database import Database
 from flask_cors import CORS
 from flask_mail import Mail, Message
 import pandas as pd
-from collections import OrderedDict
 import attachment
+import json
 
 
-# configure stuff
+# configuration  stuff
 app = Flask(__name__)
 with open('config/mail_config.json','r') as f:
             mail_config_json = json.load(f)
@@ -89,24 +88,28 @@ def put_tenant():
     args = request.get_json()
     result = db.add_tenant(args)
     if result is not None:
-        if result['status'] == 0 or True:            
-            msg = Message('Booking Receipt Confirmation', sender = 'phantomdanny980@gmail.com', recipients = ['nkambule773@gmail.com'])
-            msg_text = attachment.generate_attachment(args)
-            if msg_text is not None:
-                msg.body = msg_text
-                # attachment 
+        if result['status'] == 0:            
+            email = Message('Booking Receipt Confirmation', sender = 'phantomdanny980@gmail.com', recipients = [args['email']])
+            email_text = attachment.generate_email_attachment(args)
+            if email_text is not None:
+                email.body = email_text
                 with app.open_resource('attachments/ca_booking.pdf') as fp:
-                    msg.attach("ca_booking.pdf","application/octet-stream",fp.read())
+                    email.attach("ca_booking.pdf","application/octet-stream",fp.read())
                 try:
-                    mail.send(msg)
+                    mail.send(email)
+                    result['mail_sent'] = 0
                     return jsonify(result),201
 
                 except:
-                    print("Could not send email")
-                    return jsonify({"failure"}),404
+                    print('Failed to send email with error : ')
+                    result['mail_sent'] = 1
+                    return jsonify(result),201
 
             else:
-                return jsonify({"failure"}),404
+                print('Failed to send email with error : ')
+                result['mail_sent'] = 1
+                return jsonify(result),201
+
         else:
             return jsonify(result),400
 
