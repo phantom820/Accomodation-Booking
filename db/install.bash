@@ -43,7 +43,7 @@ PGPASSWORD="${POSTGRES_PASSWORD}" psql -t -A \
 -c "${sql}"
 
 # run the install.py script
-echo "seeding db"
+echo "instantiating db"
 cd ..
-
+pipenv install
 pipenv run python db/install.py
