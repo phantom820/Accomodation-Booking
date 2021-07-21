@@ -1,5 +1,11 @@
 # Accomodation-Booking
 
+This is an online student residence booking application, in which students will be able reserve rooms for accomodation during an academic year. Students will be able to book room (make a reservation) and keep track of whether their reservation has been approved and finalized.
+
+### Features implemented
+- Booking a room (with email confirmation)
+
+
 ## Prerequisites
 - python 3.5
 - pipenv
