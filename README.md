@@ -5,6 +5,12 @@ This is an online student residence booking application, in which students will 
 ### Features implemented
 - Booking a room (with email confirmation)
 
+### Features pending
+- Booking tracking
+- Quote generation
+- Booking cancellation
+
+
 
 ## Prerequisites
 - python 3.5
